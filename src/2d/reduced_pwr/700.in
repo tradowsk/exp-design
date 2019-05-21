@@ -1,0 +1,14 @@
+[TemperatureProfile]
+
+  T0 = '298.0'
+  T1 = '316.0'
+  Tf = '700.0'
+  T3 = '444.0'
+  T4 = '330.0'
+
+[]
+
+[include ../common_input/2d_common.in]
+[include ../common_input/common_spec.in]
+[include ../common_input/reduced_pwr_catalycity.in]
+

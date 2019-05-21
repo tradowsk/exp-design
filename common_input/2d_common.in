@@ -1,0 +1,233 @@
+[Materials]
+  [./TestMaterial]
+    [./ThermodynamicPressure]
+      value = '266.6' #[Pa]
+    [../]
+    [./LewisNumber]
+      value = '1.4'
+    [../]
+
+    [./GasMixture]
+      thermochemistry_library = 'antioch'
+
+    [./Antioch]
+       chemical_data = '../test_data/CO_O_O2.xml'
+       gas_mixture = 'gas'
+       transport_model = 'mixture_averaged'
+       thermo_model = 'ideal_gas'
+       viscosity_model = 'blottner'
+       thermal_conductivity_model = 'eucken'
+       mass_diffusivity_model = 'constant_lewis'
+      [../]
+  [../]
+[]
+
+[TemperatureProfile]
+
+  # T0, T1, Tf, T3, T4 not common
+
+  y0 = '0.000'
+  y1 = '0.244'
+  y2 = '0.324'
+  y3 = '0.639'
+  y4 = '0.709'
+  y5 = '0.869'
+
+  Tprofile0 = '((${TemperatureProfile/T1}-${TemperatureProfile/T0})/(${TemperatureProfile/y1}-${TemperatureProfile/y0}))*(y-${TemperatureProfile/y0})+${TemperatureProfile/T0}'
+  Tprofile1 = '((${TemperatureProfile/Tf}-${TemperatureProfile/T1})/(${TemperatureProfile/y2}-${TemperatureProfile/y1}))*(y-${TemperatureProfile/y1})+${TemperatureProfile/T1}'
+  Tprofile2 = '${TemperatureProfile/Tf}'
+  Tprofile3 = '((${TemperatureProfile/T3}-${TemperatureProfile/Tf})/(${TemperatureProfile/y4}-${TemperatureProfile/y3}))*(y-${TemperatureProfile/y3})+${TemperatureProfile/Tf}'
+  Tprofile4 = '((${TemperatureProfile/T4}-${TemperatureProfile/T3})/(${TemperatureProfile/y5}-${TemperatureProfile/y4}))*(y-${TemperatureProfile/y4})+${TemperatureProfile/T3}'
+
+
+  T = '(y<${TemperatureProfile/y1})*(${TemperatureProfile/Tprofile0})+(y>=${TemperatureProfile/y1})*(y<${TemperatureProfile/y2})*(${TemperatureProfile/Tprofile1})+(y>=${TemperatureProfile/y2})*(y<${TemperatureProfile/y3})*(${TemperatureProfile/Tprofile2})+(y>=${TemperatureProfile/y3})*(y<${TemperatureProfile/y4})*(${TemperatureProfile/Tprofile3})+(y>=${TemperatureProfile/y4})*(${TemperatureProfile/Tprofile4})'
+
+[]
+
+[Physics]
+
+  enabled_physics = 'ReactingLowMachNavierStokes'
+  is_axisymmetric = 'true'
+
+  [./ReactingLowMachNavierStokes]
+
+    material = 'TestMaterial'
+
+    ic_ids = '0'
+    ic_types = 'parsed'
+    ic_variables = 'T:Y_O:Y_O2:Y_CO:Uy:Ux'
+    ic_values = '{${TemperatureProfile/T}}{0.005}{0.995}{0.0}{28.3*(1.0-(x/0.011)^2)}{0.0}'
+
+  [../]
+
+[]
+
+[Mesh]
+
+  [./Read]
+    filename = '../grids/axi.exo'
+  [../]
+
+[]
+
+[BoundaryConditions]
+
+  bc_ids = '1 2 3 4 5'
+  bc_id_name_map = 'Inlet Wall Outlet Cylinder Axisymmetric'
+
+  [./Inlet]
+    [./Temperature]
+      type = 'isothermal'
+      T = '${TemperatureProfile/T0}'
+    [../]
+
+    [./Velocity]
+      type = 'parsed_dirichlet'
+      Uy = '28.3*(1.0-(x/0.011)^2)'
+      Ux = '0.0'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'mole_fractions'
+      X_O2 = '0.99'
+      X_O  = '0.01'
+    [../]
+  [../]
+
+  [./Outlet]
+    [./Temperature]
+      type = homogeneous_neumann
+    [../]
+
+    [./Velocity]
+      type = 'homogeneous_neumann'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'homogeneous_neumann'
+    [../]
+  [../]
+
+  [./Wall]
+    [./Temperature]
+      type = 'parsed_dirichlet'
+      T = '${TemperatureProfile/T}'
+    [../]
+
+    [./Velocity]
+      type = 'no_slip'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'homogeneous_neumann'
+    [../]
+  [../]
+
+  [./Cylinder]
+    [./Temperature]
+      type = 'isothermal'
+      T = '${TemperatureProfile/Tf}'
+    [../]
+
+    [./Velocity]
+      type = 'no_slip'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'gas_solid_catalytic_wall'
+      catalytic_reaction = 'O+C(s)->CO'
+
+      # catalycity_type not common
+
+    [../]
+  [../]
+
+  [./Axisymmetric]
+    type = 'axisymmetric'
+  [../]
+[]
+
+[Variables]
+    [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+    [../]
+
+    [./Velocity]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+    [../]
+
+    [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+    [../]
+
+    [./SpeciesMassFractions]
+      names = 'Y_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+      material = 'TestMaterial'
+    [../]
+[]
+
+[QoI]
+
+  enabled_qois = 'spectroscopic_absorption'
+
+  [./SpectroscopicAbsorption]
+
+    material = 'TestMaterial'
+    species_of_interest = 'CO'
+    hitran_data_file = '../test_data/CO_data.dat'
+    hitran_partition_function_file = '../test_data/CO_partition_function.dat'
+    partition_temperatures = '200 1499 1'
+    
+    # desired_wavenumber not common
+    
+    min_wavenumber = '2170'
+    max_wavenumber = '2175'
+    calc_thermo_pressure = 'false'
+
+    [./Rayfire]
+      origin = '0.0030875 0.0'
+      theta = '1.57079632679'
+    [../]
+    
+  [../]
+
+[]
+
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   relative_residual_tolerance = '1.0e-11'
+   absolute_residual_tolerance = '1.0e-10'
+   relative_step_tolerance = '1.0e-8'
+   use_numerical_jacobians_only = 'true'
+   do_adjoint_solve = 'false'
+[]
+
+[Output]
+
+  [./Display]
+    print_qoi = 'true'
+  [../]
+  
+[]
+
+# needed for surrogate generation to identify
+# the BC IDs that are catalytic
+[QUESO]
+  catalytic_bc_ids = '4'
+[]
+
+#[vis-options]
+#  output_vis = 'true'
+#  vis_output_file_prefix = './${TemperatureProfile/Tf}'
+#  output_format = 'ExodusII'
+#[]
+

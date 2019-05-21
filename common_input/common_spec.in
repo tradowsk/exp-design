@@ -1,0 +1,8 @@
+[QoI]
+
+  [./SpectroscopicAbsorption]
+    desired_wavenumber = '2172.758825'
+  [../]
+
+[] 
+    

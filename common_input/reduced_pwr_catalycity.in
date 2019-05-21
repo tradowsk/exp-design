@@ -1,0 +1,17 @@
+[BoundaryConditions]
+
+  [./Cylinder]
+
+    [./SpeciesMassFractions]
+      catalycity_type = 'power'
+      
+      [./PowerLawCatalycity]
+        gamma0 = '0.218'
+        Tref = '298.0'
+        alpha = '-0.933'
+      [../]
+
+    [../]
+  [../]
+
+[]

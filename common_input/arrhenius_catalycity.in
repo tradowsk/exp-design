@@ -1,0 +1,16 @@
+[BoundaryConditions]
+
+  [./Cylinder]
+
+    [./SpeciesMassFractions]
+      catalycity_type = 'arrhenius'
+
+      [./ArrheniusCatalycity]
+        gamma0 = '0.0285'
+        Ta = '-901.0'
+      [../]
+
+    [../]
+  [../]
+
+[]

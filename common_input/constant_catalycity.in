@@ -1,0 +1,15 @@
+[BoundaryConditions]
+
+  [./Cylinder]
+
+    [./SpeciesMassFractions]
+      catalycity_type = 'constant'
+
+      [./ConstantCatalycity]
+        gamma = '80.0e-3'
+      [../]
+
+    [../]
+  [../]
+
+[]
