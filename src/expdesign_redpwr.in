@@ -1,0 +1,46 @@
+
+[GridSearchExperimentalDesign]
+
+  catalycity_model = 'reduced_pwr'
+  
+  sigma_noise = '2.50e-3'
+  
+#  fix_p  = '266.6'
+#  fix_Xo = '0.01'
+#  fix_Tf = '800.0'
+  
+  metric_type = 'min_var'
+  
+  num_initial_experiments = '5'
+  
+  [./Experiment0]
+    p  = '266.6'
+    Xo = '0.01'
+    Tf = '800.0'
+  [../]
+  
+  [./Experiment1]
+    p  = '266.6'
+    Xo = '0.01'
+    Tf = '600.0'
+  [../]
+  
+  [./Experiment2]
+    p  = '350.0'
+    Xo = '0.01'
+    Tf = '800.0'
+  [../]
+  
+  [./Experiment3]
+    p  = '266.6'
+    Xo = '0.02'
+    Tf = '800.0'
+  [../]
+  
+  [./Experiment4]
+    p  = '266.6'
+    Xo = '0.01'
+    Tf = '1200.0'
+  [../]
+  
+[]
