@@ -9,6 +9,10 @@
 #include <queso/InterpolationSurrogateBuilder.h>
 #include <queso/InterpolationSurrogateIOASCII.h>
 
+
+#ifndef GRINS_EVALUATOR_H
+#define GRINS_EVALUATOR_H
+
 class GRINSEvaluator {
 
   public:
@@ -50,15 +54,8 @@ class GRINSEvaluator {
       double T3 = 0.1375*(Tf-873.0) + 470.0;
       double T4 = 0.1250*(Tf-873.0) + 350.0;
       
-//      getpot.set("TemperatureProfile/T1",T1);
-//      getpot.set("TemperatureProfile/Tf",Tf);
-//      getpot.set("TemperatureProfile/T3",T3);
-//      getpot.set("TemperatureProfile/T4",T4);
-      
       std::stringstream ss;
       ss <<"(y<0.244)*(((" <<T1 <<"-" <<T0 <<")/(0.244-0.000))*(y-0.000)+" <<T0 <<")+(y>=0.244)*(y<0.324)*(((" <<Tf <<"-" <<T1 <<")/(0.324-0.244))*(y-0.244)+" <<T1 <<")+(y>=0.324)*(y<0.639)*(" <<Tf <<")+(y>=0.639)*(y<0.709)*(((" <<T3 <<"-" <<Tf <<")/(0.709-0.639))*(y-0.639)+" <<Tf <<")+(y>=0.709)*(((" <<T4 <<"-" <<T3 <<")/(0.869-0.709))*(y-0.709)+" <<T3 <<")";
-      
-//      std::cout <<"\n\n\n************ Tprofile: " <<ss.str() <<"\n\n\n";
       
       getpot.set("BoundaryConditions/Wall/Temperature/T",ss.str());
       getpot.set("BoundaryConditions/Cylinder/Temperature/T",Tf);
@@ -111,4 +108,6 @@ class GRINSEvaluator {
 
 
 };
+
+#endif
 

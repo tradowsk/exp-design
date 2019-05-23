@@ -22,7 +22,7 @@ INCLUDE  = -I${MPI_DIR}/include/        \
 
 TARGET = generate_surrogate grid_exp_design
 
-DEPS = ../catalycity/catalycity_simulation.C ../catalycity/model_map.h ../catalycity/grins_evaluator.h
+DEPS = ../catalycity/catalycity_simulation.C ../catalycity/model_map.h ../catalycity/grins_evaluator.h ../inc/likelihood.h ../inc/sip_likelihood.h
 
 all: $(TARGET)
 
