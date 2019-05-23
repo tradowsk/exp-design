@@ -430,6 +430,7 @@ int main(int argc, char ** argv)
     std::shared_ptr<QUESO::ExperimentalLikelihoodWrapper<QUESO::GslVector,QUESO::GslMatrix>> wrapper( new QUESO::ExperimentalLikelihoodWrapper<QUESO::GslVector,QUESO::GslMatrix>(likelihood,interface) );
     
     std::shared_ptr<QUESO::ScenarioRunner<QUESO::GslVector,QUESO::GslMatrix>> runner( new QUESO::ScenarioRunner<QUESO::GslVector,QUESO::GslMatrix>(prior,wrapper,metric) );
+    runner->set_output_rawchain("h5");
     
     QUESO::GridSearchExperimentalDesign<QUESO::GslVector,QUESO::GslMatrix> exp_design(scenario_domain,n_points,runner);
 
